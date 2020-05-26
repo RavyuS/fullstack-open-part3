@@ -19,6 +19,14 @@ app.get('/api/persons/:id',(req,res) => {
     res.json(person)
 })
 
+app.delete('/api/persons/:id',(req,res) => {
+    const id = Number(req.params.id)
+    persons = persons.filter(person => id !== person.id)
+    console.log("deleted")
+    res.status(204).end()
+    
+})
+
 app.get('/info',(req,res)=>{
     
     
@@ -33,7 +41,7 @@ app.listen(PORT,() => {
     console.log(`Server running on port ${PORT}`)
 })
 
-const persons = [
+let persons = [
       {
         "name": "Arto Hellas",
         "number": "040-123456",
