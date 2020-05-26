@@ -9,6 +9,16 @@ app.get(`/api/persons`,(req,res) => {
 
 })
 
+app.get('/api/persons/:id',(req,res) => {
+    const id = req.params.id
+    const person = persons.find(person => person.id===Number(id))
+    if(!person) {
+        console.log(`${id} not found`)
+        return res.status(404).end()
+    }
+    res.json(person)
+})
+
 app.get('/info',(req,res)=>{
     
     
