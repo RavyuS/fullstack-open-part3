@@ -1,13 +1,16 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
+app.use(express.json()) //Middleware
+app.use(morgan(':method :url :status - :response-time ms :req-content'))
 
-app.use(express.json())
-
-app.get(`/api/persons`,(req,res) => {
-    res.json(persons)
-
+morgan.token('req-content',(req,res) => {
+  console.log('invoking token')
+  return JSON.stringify(req.body)
 })
+
+app.get(`/api/persons`,(req,res) => res.json(persons))
 
 app.get('/api/persons/:id',(req,res) => {
     const id = req.params.id
