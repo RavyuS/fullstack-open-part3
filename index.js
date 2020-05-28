@@ -19,9 +19,12 @@ app.get(`/api/persons`,(req,res) => {
   Person.find({}).then(persons => res.json(persons))
 })
 
-app.get('/api/persons/:id',(req,res) => {
+app.get('/api/persons/:id',(req,res,next) => {
     const id = req.params.id
-    Person.findById(id).then(person=> res.json(person))
+    Person.findById(id).then(person=> {
+      if(person)res.json(person)
+      else next(error)
+    }).catch(error => next(error))
     // const person = persons.find(person => person.id===Number(id))
     // if(!person) {
     //     console.log(`${id} not found`)
@@ -30,12 +33,26 @@ app.get('/api/persons/:id',(req,res) => {
  
 })
 
-app.delete('/api/persons/:id',(req,res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(person => id !== person.id)
-    console.log("deleted")
-    res.status(204).end()
+app.delete('/api/persons/:id',(req,res,next) => {
+    const id = req.params.id
+    Person.findByIdAndDelete(id).then(deleted =>{
+      res.status(204).end()
+      console.log(`Deleted ${deleted}`)
+    }).catch(error => next(error))
     
+    
+})
+
+app.put('/api/persons/:id',(req,res,next) => {
+  const id = req.params.id
+  const body = req.body
+  const replacementNote = {
+    name:body.name,
+    number:body.number
+  }
+
+  Person.findByIdAndUpdate(id,replacementNote,{new:true})
+  .then(updatedPerson => res.json(updatedPerson)).catch(error=>next(error))
 })
 
 app.post('/api/persons',(req,res) => {
@@ -70,6 +87,17 @@ app.get('/info',(req,res)=>{
         <br>${Date()}`
     )
 })
+
+const errorHandler = (error,request,response,next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error) //default express error handler
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT,() => {
