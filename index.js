@@ -81,11 +81,13 @@ app.post('/api/persons',(req,res) => {
 
 app.get('/info',(req,res)=>{
     
-    
-    res.send(
-        `<p>Phonebook has info for ${persons.length} people</p>
+    Person.find({}).then(Persons =>{
+      res.send(
+        `<p>Phonebook has info for ${Persons.length} people</p>
         <br>${Date()}`
-    )
+    )      
+    })
+ 
 })
 
 const errorHandler = (error,request,response,next) => {
