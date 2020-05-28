@@ -7,7 +7,8 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "build:ui": "rm -rf build/ && cd '../fullstack react/part2/phonebook' && npx react-scripts build && cp -r build/ ../../../fullstack_part3/"
+    "build:ui": "rm -rf build/ && cd '../fullstack react/part2/phonebook' && npx react-scripts build && cp -r build/ ../../../fullstack_part3/",
+    "lint": "eslint ."
   },
   "author": "Ravyu Sivakumaran",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^7.1.0",
     "nodemon": "^2.0.4"
   }
 }
