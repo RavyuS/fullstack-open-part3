@@ -50,8 +50,8 @@ app.put('/api/persons/:id',(req,res,next) => {
     name:body.name,
     number:body.number
   }
-
-  Person.findByIdAndUpdate(id,replacementNote,{new:true})
+  console.log(body)
+  Person.findByIdAndUpdate(id,replacementNote,{new:true,runValidators:true,context: 'query'})
   .then(updatedPerson => res.json(updatedPerson)).catch(error=>next(error))
 })
 
@@ -65,9 +65,9 @@ app.post('/api/persons',(req,res,next) => {
         return res.status(400).json({error:"name or number missing."})
     }
     
-    else if (match){
-        return res.status(400).json({error:"name must be unique"})
-    }
+    // else if (match){
+    //     return res.status(400).json({error:"name must be unique"})
+    // }
 
     const person = new Person({
         name: body.name,
@@ -92,12 +92,15 @@ app.get('/info',(req,res)=>{
 })
 
 const errorHandler = (error,request,response,next) => {
-  // console.error("LOG HERE->",error.errors.name.kind)
+  console.error("LOG HERE->",error.message)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   }
-  if (error.name === 'ValidationError' && error.errors.name.kind === 'unique') return response.status(400).send({error:'name is not unique'})
+  if (error.name === 'ValidationError' ){
+    console.log("Validation Error spotted")
+    return response.status(400).json(error.message)
+  } 
 
   next(error) //default express error handler
 }

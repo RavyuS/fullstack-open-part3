@@ -6,12 +6,17 @@ var uniqueValidator = require('mongoose-unique-validator');
 
 mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 const personSchema = new mongoose.Schema({
     name: {
         type:String,
         unique:true,
+        minlength:3
     },
-    number: String
+    number: {
+        type:String,
+        minlength:8
+    }
 })
 
 personSchema.plugin(uniqueValidator)
