@@ -55,11 +55,12 @@ app.put('/api/persons/:id',(req,res,next) => {
   .then(updatedPerson => res.json(updatedPerson)).catch(error=>next(error))
 })
 
-app.post('/api/persons',(req,res) => {
+app.post('/api/persons',(req,res,next) => {
     const body = req.body
-    console.log(body)
+    console.log(body.name)
     let match 
     Person.find({name:body.name}).then(response => match = response)
+    console.log(match)
     if(!body.name ||!body.number){
         return res.status(400).json({error:"name or number missing."})
     }
@@ -75,7 +76,7 @@ app.post('/api/persons',(req,res) => {
     person.save().then(resp => {
       console.log(`saved ${resp}`)
       res.json(resp)
-    })
+    }).catch(error => next(error))
 
 })
 
@@ -91,11 +92,12 @@ app.get('/info',(req,res)=>{
 })
 
 const errorHandler = (error,request,response,next) => {
-  console.error(error.message)
+  // console.error("LOG HERE->",error.errors.name.kind)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  }
+  if (error.name === 'ValidationError' && error.errors.name.kind === 'unique') return response.status(400).send({error:'name is not unique'})
 
   next(error) //default express error handler
 }
